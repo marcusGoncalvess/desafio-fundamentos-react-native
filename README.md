@@ -10,8 +10,8 @@
 Nesse desafio construímos o GoMarketplace, um aplicativo para android e ios feito em React Native, usmos uma api fake para trazer os dados. <br>
 Deu para aprender bastante do AsyncStorage e do APIContext <br>
 ## Imagens do app 👀
-<img src="./github_assets/market.png"></img>
-<img src="./github_assets/cart.png"></img> <br>
+<img src="./github_assets/market.png" height=800></img> <br><br>
+<img src="./github_assets/cart.png" height=800></img> <br>
 Para mais detalhes sobre o desafio e que era precisa ser feito para ser passado em cada teste, você pode ver neste <a href="https://github.com/rocketseat-education/bootcamp-gostack-desafios/tree/master/desafio-fundamentos-react-native">link</a>.
 
 ## 15/15 Testes Concluídos 🎯
