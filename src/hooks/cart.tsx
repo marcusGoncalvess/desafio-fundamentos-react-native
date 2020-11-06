@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import React, {
   createContext,
   useState,
@@ -45,89 +46,65 @@ const CartProvider: React.FC = ({ children }) => {
 
   const addToCart = useCallback(
     async product => {
-      // TODO ADD A NEW ITEM TO THE CART
-      const hasProductOnCart = products.find(pr => {
+      let newProducts;
+
+      const productExists = products.find(pr => {
         return pr.id === product.id;
       });
-      if (hasProductOnCart) {
-        hasProductOnCart.quantity += 1;
-        const returnFilterProducts = products.filter(pr => {
-          return pr.id !== hasProductOnCart.id;
-        });
-        const newProducts = [...returnFilterProducts, hasProductOnCart];
-        setProducts(newProducts);
-        await AsyncStorage.setItem(
-          '@GoMarketplace:cart',
-          JSON.stringify(newProducts),
+      if (productExists) {
+        newProducts = products.map(p =>
+          p.id === product.id ? { ...product, quantity: p.quantity + 1 } : p,
         );
+        setProducts(newProducts);
       } else {
-        const newProducts = [...products, { ...product, quantity: 1 }];
+        newProducts = [...products, { ...product, quantity: 1 }];
         setProducts(newProducts);
-        await AsyncStorage.setItem(
-          '@GoMarketplace:cart',
-          JSON.stringify(newProducts),
-        );
       }
+
+      await AsyncStorage.setItem(
+        '@GoMarketplace:cart',
+        JSON.stringify(newProducts),
+      );
     },
     [products],
   );
 
   const increment = useCallback(
     async id => {
-      // TODO INCREMENTS A PRODUCT QUANTITY IN THE CART
-      const findProductToIncrement = products.find(product => {
-        return product.id === id;
-      });
-      if (findProductToIncrement) {
-        findProductToIncrement.quantity += 1;
+      const newProducts = products.map(product =>
+        product.id === id
+          ? { ...product, quantity: product.quantity + 1 }
+          : product,
+      );
 
-        const returnFilterProducts = products.filter(pr => {
-          return pr.id !== id;
-        });
+      setProducts(newProducts);
 
-        setProducts(() => {
-          return [...returnFilterProducts, findProductToIncrement];
-        });
-
-        await AsyncStorage.setItem(
-          '@GoMarketplace:cart',
-          JSON.stringify(products),
-        );
-      }
+      await AsyncStorage.setItem(
+        '@GoMarketplace:cart',
+        JSON.stringify(newProducts),
+      );
     },
     [products],
   );
 
   const decrement = useCallback(
     async id => {
-      // TODO DECREMENTS A PRODUCT QUANTITY IN THE CART
-      const findProductToDecrement = products.find(product => {
-        return product.id === id;
+      const newProducts = products.filter(product => {
+        if (product.id === id) {
+          if (product.quantity === 1) {
+            return;
+          }
+          return { ...product, quantity: product.quantity - 1 };
+        }
+        return product;
       });
 
-      if (findProductToDecrement) {
-        const returnFilterProducts = products.filter(pr => {
-          return pr.id !== findProductToDecrement.id;
-        });
-        if (findProductToDecrement.quantity === 1) {
-          returnFilterProducts
-            ? setProducts(returnFilterProducts)
-            : setProducts([]);
+      setProducts(newProducts);
 
-          await AsyncStorage.setItem(
-            '@GoMarketplace:cart',
-            JSON.stringify(returnFilterProducts),
-          );
-        } else {
-          findProductToDecrement.quantity -= 1;
-
-          setProducts([...returnFilterProducts, findProductToDecrement]);
-          await AsyncStorage.setItem(
-            '@GoMarketplace:cart',
-            JSON.stringify([...returnFilterProducts, findProductToDecrement]),
-          );
-        }
-      }
+      await AsyncStorage.setItem(
+        '@GoMarketplace:cart',
+        JSON.stringify(newProducts),
+      );
     },
     [products],
   );
